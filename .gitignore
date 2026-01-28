@@ -1,1 +1,77 @@
+# ==============================
+# General
+# ==============================
+.env
+.env.*
+!.env.example
+*.log
+*.tmp
+*.swp
+.DS_Store
+Thumbs.db
+
+# ==============================
+# Node / Next.js
+# ==============================
+node_modules/
+.next/
+out/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# ==============================
+# Python
+# ==============================
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.egg-info/
+.eggs/
+.venv/
+venv/
+ENV/
+env/
+
+# ==============================
+# FastAPI / Uvicorn
+# ==============================
+uvicorn.log
+
+# ==============================
+# ML / Data
+# ==============================
+ml/data/*.csv
+ml/data/*.json
+ml/data/*.parquet
+ml/models/
+*.pkl
+*.joblib
+
+# ==============================
+# Database
+# ==============================
+*.sqlite3
+*.db
+
+# ==============================
+# Docker
+# ==============================
+.dockerignore
+docker-compose.override.yml
+
+# ==============================
+# IDE / Editor
+# ==============================
+.vscode/
+.idea/
+*.iml
+
+# ==============================
+# OS-specific
+# ==============================
+.DS_Store
+Thumbs.db
 
