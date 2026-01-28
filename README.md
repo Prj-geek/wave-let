@@ -46,9 +46,3 @@ FastAPI (Python)
 Recommendation Engine
 
 Python (similarity-based logic)
-
-Data
-
-Spotify Web API
-
-Curated song dataset
