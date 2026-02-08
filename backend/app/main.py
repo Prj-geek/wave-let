@@ -2,6 +2,7 @@
 
 import os
 import base64
+import time
 import requests
 from math import sqrt
 from dotenv import load_dotenv
@@ -23,8 +24,17 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# -------- TOKEN CACHE --------
+spotify_token = None
+token_expires_at = 0
+
 
 def get_spotify_token():
+    global spotify_token, token_expires_at
+
+    if spotify_token and time.time() < token_expires_at:
+        return spotify_token
+
     auth = f"{SPOTIFY_CLIENT_ID}:{SPOTIFY_CLIENT_SECRET}"
     auth_b64 = base64.b64encode(auth.encode()).decode()
 
@@ -36,7 +46,12 @@ def get_spotify_token():
         },
         data={"grant_type": "client_credentials"},
     )
-    return res.json()["access_token"]
+
+    data = res.json()
+    spotify_token = data["access_token"]
+    token_expires_at = time.time() + data["expires_in"] - 60
+
+    return spotify_token
 
 
 def search_track(song: str, token: str):
