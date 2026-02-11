@@ -125,3 +125,10 @@ def recommend(song: str = Query(...)):
         "spotify_url": best_track["external_urls"]["spotify"],
         "similarity_score": round(best_score, 4),
     }
+    
+def get_artist(artist_id: str, token: str):
+    res = requests.get(
+        f"https://api.spotify.com/v1/artists/{artist_id}",
+        headers={"Authorization": f"Bearer {token}"},
+    )
+    return res.json()
