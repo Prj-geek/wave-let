@@ -100,35 +100,58 @@ def recommend(song: str = Query(...)):
 
     base_features = get_audio_features(base_track["id"], token)
 
-    candidates = get_artist_top_tracks(
-        base_track["artists"][0]["id"], token
-    )
+    artist_id = base_track["artists"][0]["id"]
+    artist_data = get_artist(artist_id, token)
 
-    best_track = None
-    best_score = float("inf")
+    candidates = []
+
+    # Same artist
+    candidates.extend(get_artist_top_tracks(artist_id, token))
+
+    # Same genre
+    genres = artist_data.get("genres", [])
+    for genre in genres[:2]:
+        candidates.extend(search_by_genre(genre, token))
+
+    scored_tracks = []
+    seen_ids = set()
 
     for track in candidates:
         if track["id"] == base_track["id"]:
             continue
+        if track["id"] in seen_ids:
+            continue
+
+        seen_ids.add(track["id"])
 
         features = get_audio_features(track["id"], token)
+        if not features:
+            continue
+
         score = distance(base_features, features)
 
-        if score < best_score:
-            best_score = score
-            best_track = track
+        scored_tracks.append({
+            "name": track["name"],
+            "artist": track["artists"][0]["name"],
+            "spotify_url": track["external_urls"]["spotify"],
+            "similarity_score": score
+        })
+
+    # Sort by similarity (lowest first)
+    scored_tracks.sort(key=lambda x: x["similarity_score"])
+
+    top_recommendations = scored_tracks[:5]
 
     return {
         "input_song": base_track["name"],
-        "recommended_song": best_track["name"],
-        "artist": best_track["artists"][0]["name"],
-        "spotify_url": best_track["external_urls"]["spotify"],
-        "similarity_score": round(best_score, 4),
+        "recommendations": [
+            {
+                "name": t["name"],
+                "artist": t["artist"],
+                "spotify_url": t["spotify_url"],
+                "similarity_score": round(t["similarity_score"], 4)
+            }
+            for t in top_recommendations
+        ]
     }
-    
-def get_artist(artist_id: str, token: str):
-    res = requests.get(
-        f"https://api.spotify.com/v1/artists/{artist_id}",
-        headers={"Authorization": f"Bearer {token}"},
-    )
-    return res.json()
+
