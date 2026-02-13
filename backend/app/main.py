@@ -88,6 +88,14 @@ def distance(a, b):
         ((a["tempo"] - b["tempo"]) / 200) ** 2 +
         (a["valence"] - b["valence"]) ** 2
     )
+def get_audio_features_batch(track_ids: list, token: str):
+    ids_string = ",".join(track_ids[:100])  # Spotify limit = 100
+    res = requests.get(
+        "https://api.spotify.com/v1/audio-features",
+        headers={"Authorization": f"Bearer {token}"},
+        params={"ids": ids_string},
+    )
+    return res.json().get("audio_features", [])
 
 
 @app.get("/recommend")
