@@ -88,6 +88,28 @@ def distance(a, b):
         ((a["tempo"] - b["tempo"]) / 200) ** 2 +
         (a["valence"] - b["valence"]) ** 2
     )
+
+def generate_explanation(base, candidate):
+    differences = {
+        "danceability": abs(base["danceability"] - candidate["danceability"]),
+        "energy": abs(base["energy"] - candidate["energy"]),
+        "tempo": abs(base["tempo"] - candidate["tempo"]),
+        "valence": abs(base["valence"] - candidate["valence"]),
+    }
+
+    # Find most similar feature (smallest difference)
+    most_similar = min(differences, key=differences.get)
+
+    explanations = {
+        "danceability": "It has a very similar danceability level.",
+        "energy": "It matches the energy of your song.",
+        "tempo": "It has a similar tempo and pacing.",
+        "valence": "It carries a similar emotional tone.",
+    }
+
+    return explanations[most_similar]
+
+
 def get_audio_features_batch(track_ids: list, token: str):
     ids_string = ",".join(track_ids[:100])  # Spotify limit = 100
     res = requests.get(
