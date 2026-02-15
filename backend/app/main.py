@@ -164,8 +164,10 @@ def recommend(song: str = Query(...)):
             "name": track["name"],
             "artist": track["artists"][0]["name"],
             "spotify_url": track["external_urls"]["spotify"],
-            "similarity_score": score
+            "similarity_score": score,
+            "why": generate_explanation(base_features, features)
         })
+        
 
     # Sort by similarity (lowest first)
     scored_tracks.sort(key=lambda x: x["similarity_score"])
