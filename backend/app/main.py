@@ -175,15 +175,17 @@ def recommend(song: str = Query(...)):
     top_recommendations = scored_tracks[:5]
 
     return {
-        "input_song": base_track["name"],
-        "recommendations": [
-            {
-                "name": t["name"],
-                "artist": t["artist"],
-                "spotify_url": t["spotify_url"],
-                "similarity_score": round(t["similarity_score"], 4)
-            }
-            for t in top_recommendations
-        ]
-    }
+    "input_song": base_track["name"],
+    "recommendations": [
+        {
+            "name": t["name"],
+            "artist": t["artist"],
+            "spotify_url": t["spotify_url"],
+            "similarity_score": round(t["similarity_score"], 4),
+            "why": t["why"]
+        }
+        for t in top_recommendations
+    ]
+}
+
 
