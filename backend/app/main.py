@@ -174,7 +174,7 @@ def recommend(song: str = Query(...)):
 
     top_recommendations = scored_tracks[:5]
 
-    return {
+   result = {
     "input_song": base_track["name"],
     "recommendations": [
         {
@@ -188,4 +188,10 @@ def recommend(song: str = Query(...)):
     ]
 }
 
+recommendation_cache[cache_key] = {
+    "data": result,
+    "expires_at": time.time() + CACHE_TTL
+}
+
+return result
 
