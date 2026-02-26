@@ -15,6 +15,19 @@ class SongRequest(BaseModel):
 
 @app.post("/recommend")
 def recommend_song(request: SongRequest):
+    token = get_spotify_token()
+
+    song_data = search_song(request.song_name, token)
+
+    if not song_data:
+        return {"error": "Song not found"}
+
+    return {
+        "input_song": request.song_name,
+        "found_song": song_data
+    }
+
+def recommend_song(request: SongRequest):
   token = get_spotify_token()
 
   return {
@@ -45,3 +58,31 @@ def get_spotify_token():
     json_result = result.json()
 
     return json_result["access_token"]
+
+def search_song(song_name: str, token: str):
+    url = "https://api.spotify.com/v1/search"
+
+    headers = {
+        "Authorization": f"Bearer {token}"
+    }
+
+    params = {
+        "q": song_name,
+        "type": "track",
+        "limit": 1
+    }
+
+    response = requests.get(url, headers=headers, params=params)
+    result = response.json()
+
+    if result["tracks"]["items"]:
+        track = result["tracks"]["items"][0]
+
+        return {
+            "id": track["id"],
+            "name": track["name"],
+            "artist": track["artists"][0]["name"],
+            "spotify_url": track["external_urls"]["spotify"]
+        }
+    else:
+        return None
