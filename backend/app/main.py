@@ -20,7 +20,7 @@ def recommend_song(request: SongRequest):
     song_data = search_song(request.song_name, token)
 
     if not song_data:
-        return {"error": "Song not found"}
+        return {"error": "Not found"}
 
     return {
         "input_song": request.song_name,
