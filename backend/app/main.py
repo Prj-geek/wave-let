@@ -86,3 +86,21 @@ def search_song(song_name: str, token: str):
         }
     else:
         return None
+
+def get_audio_features(track_id: str, token: str):
+    url = f"https://api.spotify.com/v1/audio-features/{track_id}"
+
+    headers = {
+        "Authorization": f"Bearer {token}"
+    }
+
+    response = requests.get(url, headers=headers)
+    result = response.json()
+
+    return {
+        "danceability": result.get("danceability"),
+        "energy": result.get("energy"),
+        "tempo": result.get("tempo"),
+        "valence": result.get("valence"),
+        "acousticness": result.get("acousticness")
+    }
