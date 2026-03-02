@@ -144,7 +144,7 @@ def search_song(song_name: str, token: str):
     }
 
     params = {
-        "q": song_name,
+        "q": f'track:"{song_name}"',
         "type": "track",
         "limit": 1
     }
