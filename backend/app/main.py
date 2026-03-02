@@ -211,3 +211,37 @@ def get_audio_features(track_id: str, token: str):
     
     print(f"Failed to get audio features: {response.status_code}")
     return None
+
+def get_recommendations(seed_track_id: str, token: str):
+    """Get recommended tracks from Spotify"""
+    
+    url = "https://api.spotify.com/v1/recommendations"
+    
+    headers = {
+        "Authorization": f"Bearer {token}"
+    }
+    
+    params = {
+        "seed_tracks": seed_track_id,
+        "limit": 5
+    }
+    
+    response = requests.get(url, headers=headers, params=params)
+    
+    if response.status_code != 200:
+        print(f"Recommendation error: {response.status_code}")
+        return []
+    
+    data = response.json()
+    
+    recommendations = []
+    
+    for track in data.get("tracks", []):
+        recommendations.append({
+            "id": track["id"],
+            "name": track["name"],
+            "artist": track["artists"][0]["name"],
+            "spotify_url": track["external_urls"]["spotify"]
+        })
+    
+    return recommendations
