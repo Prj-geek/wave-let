@@ -116,7 +116,6 @@ class SongRequest(BaseModel):
 
 @app.post("/recommend")
 def recommend_song(request: SongRequest):
-    """Get song recommendations with audio features"""
     token = user_tokens.get("current_user")
     
     if not token:
@@ -128,10 +127,13 @@ def recommend_song(request: SongRequest):
         return {"error": "Song not found"}
 
     features = get_audio_features(song_data["id"], token)
+    
+    recommendations = get_recommendations(song_data["id"], token)
 
     return {
         "input_song": song_data,
-        "audio_features": features
+        "audio_features": features,
+        "recommendations": recommendations
     }
 
 
