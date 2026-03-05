@@ -247,3 +247,37 @@ def get_recommendations(seed_track_id: str, token: str):
         })
     
     return recommendations
+
+def get_multiple_audio_features(track_ids: list, token: str):
+    """Get audio features for multiple tracks"""
+    
+    url = "https://api.spotify.com/v1/audio-features"
+    
+    headers = {
+        "Authorization": f"Bearer {token}"
+    }
+    
+    params = {
+        "ids": ",".join(track_ids)
+    }
+    
+    response = requests.get(url, headers=headers, params=params)
+    
+    if response.status_code != 200:
+        return {}
+    
+    data = response.json()
+    
+    features_map = {}
+    
+    for item in data.get("audio_features", []):
+        if item:
+            features_map[item["id"]] = {
+                "danceability": item.get("danceability"),
+                "energy": item.get("energy"),
+                "tempo": item.get("tempo"),
+                "valence": item.get("valence"),
+                "acousticness": item.get("acousticness")
+            }
+    
+    return features_map
