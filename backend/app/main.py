@@ -279,3 +279,5 @@ def get_multiple_audio_features(track_ids: list, token: str):
                 "valence": item.get("valence"),
                 "acousticness": item.get("acousticness")
             }
+
+    return features_map
