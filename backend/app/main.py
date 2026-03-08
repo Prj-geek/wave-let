@@ -231,7 +231,6 @@ def get_recommendations(seed_track_id: str, token: str):
     response = requests.get(url, headers=headers, params=params)
     
     if response.status_code != 200:
-        print(f"Recommendation error: {response.status_code}")
         return []
     
     data = response.json()
