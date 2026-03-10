@@ -116,8 +116,9 @@ class SongRequest(BaseModel):
 
 @app.post("/recommend")
 def recommend_song(request: SongRequest):
+
     token = user_tokens.get("current_user")
-    
+
     if not token:
         return {"error": "Not authenticated. Visit /login first"}
 
@@ -126,13 +127,20 @@ def recommend_song(request: SongRequest):
     if not song_data:
         return {"error": "Song not found"}
 
-    features = get_audio_features(song_data["id"], token)
-    
+    seed_features = get_audio_features(song_data["id"], token)
+
     recommendations = get_recommendations(song_data["id"], token)
+
+    track_ids = [track["id"] for track in recommendations]
+
+    features_map = get_multiple_audio_features(track_ids, token)
+
+    for track in recommendations:
+        track["audio_features"] = features_map.get(track["id"])
 
     return {
         "input_song": song_data,
-        "audio_features": features,
+        "input_features": seed_features,
         "recommendations": recommendations
     }
 
