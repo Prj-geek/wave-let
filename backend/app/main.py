@@ -288,3 +288,25 @@ def get_multiple_audio_features(track_ids: list, token: str):
             }
 
     return features_map
+
+def calculate_similarity(seed_features: dict, candidate_features: dict):
+    """Calculate similarity score between two songs"""
+
+    if not seed_features or not candidate_features:
+        return 0
+
+    score = 0
+
+    score += abs(seed_features["danceability"] - candidate_features["danceability"])
+    score += abs(seed_features["energy"] - candidate_features["energy"])
+    score += abs(seed_features["valence"] - candidate_features["valence"])
+
+    # Normalize tempo difference
+    tempo_diff = abs(seed_features["tempo"] - candidate_features["tempo"]) / 200
+    score += tempo_diff
+
+    score += abs(seed_features["acousticness"] - candidate_features["acousticness"])
+
+    similarity = 1 - (score / 5)
+
+    return round(similarity, 3)
