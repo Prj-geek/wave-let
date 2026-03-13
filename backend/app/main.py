@@ -136,7 +136,23 @@ def recommend_song(request: SongRequest):
     features_map = get_multiple_audio_features(track_ids, token)
 
     for track in recommendations:
-        track["audio_features"] = features_map.get(track["id"])
+        track_features = track.get("audio_features")
+
+        similarity = calculate_similarity(seed_features, track_features)
+
+        track["similarity_score"] = similarity
+
+    ranked_recommendations = sorted(
+        recommendations,
+        key=lambda x: x["similarity_score"],
+        reverse=True
+    )
+
+    return {
+        "input_song": song_data,
+        "input_features": seed_features,
+        "recommendations": ranked_recommendations
+    }
 
     return {
         "input_song": song_data,
