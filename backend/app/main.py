@@ -322,5 +322,7 @@ def calculate_similarity(seed_features: dict, candidate_features: dict):
     score += tempo_diff
 
     score += abs(seed_features["acousticness"] - candidate_features["acousticness"])
+
     similarity = 1 - (score / 5)
+
     return round(similarity, 3)
